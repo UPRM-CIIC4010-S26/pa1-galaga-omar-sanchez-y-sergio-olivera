@@ -13,13 +13,15 @@ class StdEnemy : public Enemy {
 
         StdEnemy(float x, float y) : Enemy(x, y) { 
             this->cooldown = GetRandomValue(240, 1380);
-            this->health = 2; 
+            this->health = 2;
+            this->score = 150; 
         }
 
         StdEnemy(float x, float y, bool newSpawn) : Enemy(x, y){
             this->cooldown = GetRandomValue(300, 1380);
             this->health = 2;
             this->spawning = newSpawn;
+            this->score = 150;
         }
 
         void draw() override;

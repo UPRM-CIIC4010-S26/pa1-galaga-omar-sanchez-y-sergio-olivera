@@ -37,7 +37,7 @@ void Program::Update() {
     pauseFrames = std::max(pauseFrames - 1, 0);
 
     if (!startup && !paused && !gameOver && pauseFrames <= 0) {
-        Enemy::ManageEnemies(player->hitBox);
+        Enemy::ManageEnemies(player->hitBox, this);
         StdEnemy::attackReset();
         ManageEnemyRespawns();
         player->update();
@@ -97,7 +97,9 @@ void Program::ManageEnemyRespawns() {
 
     respawnCooldown -= 1;
     if (respawnCooldown <= 0) {
-        respawnCooldown = 1080;
+        int milestone = score/1000;
+        milestone = std::min(milestone,10);
+        respawnCooldown = 1080 - (milestone*60);
         for (std::pair<std::pair<float, float>, Enemy*>& p : Enemy::enemies) {
             if (!p.second && p.first.second != 150) {
                 int eType = GetRandomValue(1, 3);
@@ -152,6 +154,15 @@ void Program::DrawGameOver() {
     DrawText("Game Over", (GetScreenWidth() / 2) - 380, 50, 144, WHITE);
     DrawText("Press Enter", (GetScreenWidth() / 2) - 75, GetScreenHeight() / 2, 24, GRAY);
 }
+void Program::AddScore(int value){
+    score += value;
+    if(lives<5){
+        if(score>=bonusThreshold){
+            lives++;
+            bonusThreshold = bonusThreshold + 1000;
+        }
+    }
+}
 
 void Program::KeyInputs() {
     if ((!gameOver && !startup && IsKeyPressed('P')) || (paused && IsKeyPressed(KEY_ENTER))) paused = !paused;
@@ -193,6 +204,7 @@ void Program::Reset() {
     count = 0;
     delay = 0;
     lives = 3;
+    score = 0;
     for (int i = 0; i < 30; i++) {
         float x = 250 + 50 * (i%10);
         float y = 200 + 50 * (i/10);
