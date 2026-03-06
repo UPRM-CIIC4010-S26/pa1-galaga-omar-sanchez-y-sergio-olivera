@@ -74,6 +74,10 @@ void Program::Update() {
 
 void Program::Draw() {
     background.Draw();
+
+    std::string scoreText="Score: "+std::to_string(score);
+    DrawText(scoreText.c_str(),10,10,25,WHITE);
+
     if (pauseFrames <= 0 && !gameOver) player->draw();
     for (Animation& a : Animation::animations) a.draw();
 
@@ -154,6 +158,9 @@ void Program::DrawGameOver() {
 }
 
 void Program::KeyInputs() {
+
+    if (IsKeyPressed('K')) score+=500;
+
     if ((!gameOver && !startup && IsKeyPressed('P')) || (paused && IsKeyPressed(KEY_ENTER))) paused = !paused;
     if (!paused && !startup && IsKeyPressed('O')) gameOver = !gameOver;
     if (!gameOver && !paused && IsKeyPressed('I')) startup = !startup;

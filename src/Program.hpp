@@ -24,6 +24,8 @@ class Program {
         bool paused = false;
         bool gameOver = false;
 
+        int score=0; //player score
+
     public:
         Program();
         
