@@ -4,6 +4,7 @@
 #include "ImageManager.hpp"
 #include "Animation.hpp"
 #include <iostream>
+#include "Program.hpp"
 
 class Enemy {
     protected:
