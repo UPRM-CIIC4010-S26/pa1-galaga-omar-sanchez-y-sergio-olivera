@@ -75,9 +75,6 @@ void Program::Update() {
 void Program::Draw() {
     background.Draw();
 
-    std::string scoreText="Score: "+std::to_string(score);
-    DrawText(scoreText.c_str(),10,10,25,WHITE);
-
     if (pauseFrames <= 0 && !gameOver) player->draw();
     for (Animation& a : Animation::animations) a.draw();
 
@@ -91,9 +88,13 @@ void Program::Draw() {
     for (Projectile p : Projectile::projectiles) p.draw();
     for (std::pair<std::pair<float, float>, Enemy*>& p : Enemy::enemies) if (p.second) p.second->draw();
 
+    std::string scoreText="Score: "+std::to_string(score);
+    DrawText(scoreText.c_str(),10,10,50,RED);
+
     if (startup) DrawStartup();
     if (paused) DrawPauseScreen();
     if (gameOver) DrawGameOver();
+
 }
 
 void Program::ManageEnemyRespawns() {
@@ -158,19 +159,19 @@ void Program::DrawGameOver() {
     DrawText("Game Over", (GetScreenWidth() / 2) - 380, 50, 144, WHITE);
     DrawText("Press Enter", (GetScreenWidth() / 2) - 75, GetScreenHeight() / 2, 24, GRAY);
 }
-void Program::AddScore(int value){
+void Program::AddScore(int value){ //add score method which checks if score goes above a milestone and adds a life 
     score += value;
-    if(lives<5){
-        if(score>=bonusThreshold){
+    TraceLog(LOG_INFO, "AddScore called Score: %i", lives);
+    while(score>=bonusThreshold && lives<5){
             lives++;
             bonusThreshold = bonusThreshold + 1000;
-        }
+            TraceLog(LOG_INFO, "Bonus life Lives: %i", lives);
     }
 }
 
 void Program::KeyInputs() {
 
-    if (IsKeyPressed('K')) score+=500;
+    if (IsKeyPressed('K')) this->AddScore(500); //changed K to run through addscore to test bonus lives and other functions
 
     if ((!gameOver && !startup && IsKeyPressed('P')) || (paused && IsKeyPressed(KEY_ENTER))) paused = !paused;
     if (!paused && !startup && IsKeyPressed('O')) gameOver = !gameOver;
@@ -211,7 +212,8 @@ void Program::Reset() {
     count = 0;
     delay = 0;
     lives = 3;
-    score = 0;
+    score = 0; //both score and threshold resets with the game
+    bonusThreshold = 1000;
     for (int i = 0; i < 30; i++) {
         float x = 250 + 50 * (i%10);
         float y = 200 + 50 * (i/10);

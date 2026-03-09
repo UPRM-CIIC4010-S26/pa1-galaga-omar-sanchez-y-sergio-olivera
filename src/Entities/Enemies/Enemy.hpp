@@ -4,7 +4,8 @@
 #include "ImageManager.hpp"
 #include "Animation.hpp"
 #include <iostream>
-#include "Program.hpp"
+
+class Program;
 
 class Enemy {
     protected:
@@ -46,41 +47,5 @@ class Enemy {
              }
         }
 
-        static void ManageEnemies(HitBox target, Program* program) {
-            for (std::pair<std::pair<float, float>, Enemy*>& p : Enemy::enemies) {
-                p.first.first += (p.first.first == 0) ? 0 : direction;
-                if (p.second) {
-                    p.second->update(p.first, target);
-
-                    for (Projectile& p2 : Projectile::projectiles) {
-                        if (p2.ID != 1 && HitBox::Collision(p.second->hitBox, p2.getHitBox())) {
-                            p.second->health--;
-                            p2.del = true;
-                        }
-                    }
-
-                    if (p.second->health <= 0) {
-                        Animation::animations.push_back(
-                            Animation(p.second->position.first, p.second->position.second, 155, 0, 33, 33, 30, 30, 4, ImageManager::SpriteSheet)
-                        );
-                        p.second = nullptr;
-                        program->AddScore(p.second->score);
-                    }
-                }
-            }
-            
-            for (int i = 0; i < Enemy::enemies.size(); i++) {
-                if ((Enemy::enemies[i].second && Enemy::enemies[i].second->position.first <= -30) || 
-                    (!Enemy::enemies[i].second && Enemy::enemies[i].first.first == 0 && Enemy::enemies[i].first.second == 0)) {
-                    Enemy::enemies.erase(Enemy::enemies.begin() + i);
-                }
-            }
-
-            directionChange++;
-
-            if (directionChange >= 200) {
-                directionChange = 0;
-                direction *= -1;
-            }
-        }
+       static void ManageEnemies(HitBox target, Program* program);
 };
