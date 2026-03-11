@@ -7,6 +7,8 @@
 #include "Animation.hpp"
 #include <iostream>
 
+//had to put function in a cpp in order to avoid circular include errors which causes too many errors
+
 void Enemy::ManageEnemies(HitBox target, Program* program) {
     for (std::pair<std::pair<float, float>, Enemy*>& p : Enemy::enemies) {
         p.first.first += (p.first.first == 0) ? 0 : Enemy::direction;
@@ -17,14 +19,23 @@ void Enemy::ManageEnemies(HitBox target, Program* program) {
                 if (p2.ID != 1 && HitBox::Collision(p.second->hitBox, p2.getHitBox())) {
                     p.second->health--;
                     p2.del = true;
+                    if(p.second->health>0){
+                        PlaySound(SoundManager::hit);
+                    }
+                    else if (p.second->health <= 0){
+                        PlaySound(SoundManager::dead);
+                    }
+                    else{
+                        PlaySound(SoundManager::hit);
+                    }
                 }
             }
 
-            if (p.second->health <= 0) {
+            if (p.second->health <= 0) {//death event
                 Animation::animations.push_back(
                     Animation(p.second->position.first, p.second->position.second, 155, 0, 33, 33, 30, 30, 4, ImageManager::SpriteSheet)
                 );
-                program->AddScore(p.second->score);
+                program->AddScore(p.second->score);//adds enemies score value to program through function to check if threshold passed
                 p.second = nullptr;
             }
         }
