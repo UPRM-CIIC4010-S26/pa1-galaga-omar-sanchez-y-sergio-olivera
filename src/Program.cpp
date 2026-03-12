@@ -88,7 +88,7 @@ void Program::Draw() {
     for (Projectile p : Projectile::projectiles) p.draw();
     for (std::pair<std::pair<float, float>, Enemy*>& p : Enemy::enemies) if (p.second) p.second->draw();
 
-    std::string scoreText="Score: "+std::to_string(score);
+    std::string scoreText="Score: "+std::to_string(score); //score text box
     DrawText(scoreText.c_str(),10,10,50,RED);
 
     if (startup) DrawStartup();
@@ -102,9 +102,9 @@ void Program::ManageEnemyRespawns() {
 
     respawnCooldown -= 1;
     if (respawnCooldown <= 0) {
-        int milestone = score/1000;
-        milestone = std::min(milestone,10);
-        respawnCooldown = 1080 - (milestone*60);
+        int milestone = score/1000; //math equation to return a number that represents score in: 1,2,3,4
+        milestone = std::min(milestone,10); //caps milestone at 10(10000 score) as to not make cooldown negative
+        respawnCooldown = 1080 - (milestone*60); //reduce cooldown in basis of 60 seconds per score level
         for (std::pair<std::pair<float, float>, Enemy*>& p : Enemy::enemies) {
             if (!p.second && p.first.second != 150) {
                 int eType = GetRandomValue(1, 3);
@@ -161,7 +161,7 @@ void Program::DrawGameOver() {
 }
 void Program::AddScore(int value){ //add score method which checks if score goes above a milestone and adds a life 
     score += value;
-    TraceLog(LOG_INFO, "AddScore called Score: %i", lives);
+    TraceLog(LOG_INFO, "AddScore called Score: %i", lives); //just added to test if function working
     while(score>=bonusThreshold && lives<5){
             lives++;
             bonusThreshold = bonusThreshold + 1000;
